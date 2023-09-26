@@ -5,6 +5,7 @@ using UnityEngine;
 public class DynamicObjectPool : MonoBehaviour
 {
     public List<GameObject> objectPool;
+    public Transform[] spawnPos;
     public GameObject objPref;
     public float spawnTime;
     private float startTime = 0;
@@ -15,7 +16,10 @@ public class DynamicObjectPool : MonoBehaviour
 
         if (startTime >= spawnTime)
         {
-            GetObject();
+            for (int i = 0; i < spawnPos.Length; i++)
+            {
+                GetObject();
+            }
 
             startTime = 0f;
         }
@@ -37,17 +41,20 @@ public class DynamicObjectPool : MonoBehaviour
             tmp = objectPool[0];
             objectPool.Remove(tmp);
             tmp.SetActive(true);
-            tmp.GetComponent<CoinParent>().InitVariables();
+            tmp.GetComponent<Coin>().InitVariables();
         }
         else
         {
-            tmp = Instantiate(objPref, transform.position, transform.rotation);
-            tmp.GetComponent<CoinParent>().SetObjectPool(this);
-            tmp.GetComponent<CoinParent>().InitVariables();
-            objectPool.Add(tmp);
+            for (int i = 0; i < spawnPos.Length; i++)
+            {
+                tmp = Instantiate(objPref, spawnPos[i].position, transform.rotation);
+                tmp.GetComponent<Coin>().SetObjectPool(this);
+                tmp.GetComponent<Coin>().InitVariables();
+                objectPool.Add(tmp);
 
-            tmp.transform.SetParent(this.transform);
-            tmp.SetActive(false);
+                tmp.transform.SetParent(this.transform);
+                tmp.SetActive(false);
+            }
         }
     }
 
